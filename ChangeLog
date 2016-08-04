@@ -1,0 +1,23 @@
+Tue Apr 10 16:26:43 2001  Pat Padgett (agroman@agroman.net)
+	* Added GPL license to distribution.
+	* Added support for GNU autoconf and automake.
+	* corkscrew now compiles on Solaris with GNU tools.
+Tue Apr 10 23:20:21 2001  Pat Padgett (agroman@agroman.net)
+	* Changed strncat to strncpy during uri setup. 
+Wed Apr 11 10:27:32 2001  Pat Padgett (agroman@agroman.net)
+	* Added support for function prototypes (for HPUX compat)
+	* Changed buffer size declaration (now #define'd)
+Tue Apr 17 14:30:23 2001  Pat Padgett (agroman@agroman.net)
+	* Fixed glaring bug with getopt.
+	* Command line syntax has changed.  (view README)
+	* corkscrew was compiled on Win32
+	* Added error reporting if proxy->dest connection unsuccessful.
+Thu Jun 14 12:05:24 2001  Pat Padgett (agroman@agroman.net)
+	* Added timer for select (THANKS Robert Loomans)
+	* Removed xmit() function
+	* Win32 support now STABLE
+Fri Aug 24 13:21:23 2001  Pat Padgett (agroman@agroman.net)
+	* Merged patches from Tamas Szerb and Karel Dudasek
+	  for proxy authentication.
+	* Cleaned up configure.in and Makefile.am.
+	* Added support for non-ANSI/K&R C compilers.

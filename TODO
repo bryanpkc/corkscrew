@@ -1,0 +1,11 @@
+Minor Tweaks :
+* Some work has been done to get corkscrew to compile on old versions
+  of SunOS (primarily 4.1.3).  If someone want's this I might work on
+  it some more, otherwise I've damn near given up.
+* The code works, but it's probably not very efficient.  Planning on
+  spending some time to work on this.
+
+Major Tweaks :
+* Add support for HTTP authentication.
+* Add support for WinGate proxies (uh, well... we'll see).
+
