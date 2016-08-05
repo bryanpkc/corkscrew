@@ -175,7 +175,7 @@ char *argv[];
 	char uri[BUFSIZE], buffer[BUFSIZE], version[BUFSIZE], descr[BUFSIZE];
 #endif
 	char *host = NULL, *desthost = NULL, *destport = NULL;
-	char *up = NULL;
+	char *up = NULL, line[4096];
 	int port, sent, setup, code, csock;
 	fd_set rfd, sfd;
 	struct timeval tv;
@@ -190,6 +190,7 @@ char *argv[];
 			port = atoi(argv[2]);
 			desthost = argv[3];
 			destport = argv[4];
+			up = getenv("CORKSCREW_AUTH");
 		}
 		if ((argc == 6)) {
 			host = argv[1];
@@ -201,9 +202,7 @@ char *argv[];
 				fprintf(stderr, "Error opening %s: %s\n", argv[5], strerror(errno));
 				exit(-1);
 			} else {
-				char line[4096];
-				fscanf(fp, "%s", line);
-				up = malloc(sizeof(line));
+				fscanf(fp, "%4095s", line);
 				up = line;
 				fclose(fp);
 			}
@@ -218,7 +217,7 @@ char *argv[];
 	strncat(uri, ":", sizeof(uri) - strlen(uri) - 1);
 	strncat(uri, destport, sizeof(uri) - strlen(uri) - 1);
 	strncat(uri, " HTTP/1.0", sizeof(uri) - strlen(uri) - 1);
-	if ((argc == 6) || (argc == 7)) {
+	if (up != NULL) {
 		strncat(uri, "\nProxy-Authorization: Basic ", sizeof(uri) - strlen(uri) - 1);
 		strncat(uri, base64_encode(up), sizeof(uri) - strlen(uri) - 1);
 	}
