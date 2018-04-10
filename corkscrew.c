@@ -181,7 +181,6 @@ char *argv[];
 	struct timeval tv;
 	ssize_t len;
 	FILE *fp;
-	int line_ok = 0;
 
 	port = 80;
 
@@ -203,9 +202,7 @@ char *argv[];
 				fprintf(stderr, "Error opening %s: %s\n", argv[5], strerror(errno));
 				exit(-1);
 			} else {
-				line_ok = fscanf(fp, "%4095s", line);
-
-				if (!line_ok) {
+				if (!fscanf(fp, "%4095s", line)) {
 					fprintf(stderr, "Error reading auth file's content\n");
 					exit(-1);
 				}
