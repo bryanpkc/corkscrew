@@ -45,12 +45,8 @@ First you need to install development tools:
     # For Red-Hat-based distributions (CentOS, Fedora, ...)
     sudo yum groupinstall 'Development tools'
 
-You will also need the source code. If you don't already have it, please
-clone it:
-
-    git clone https://github.com/bryanpkc/corkscrew.git
-
-Then you need to go into the corkscrew source directory and run
+You need to clone the repo and then you need to go into the corkscrew
+source directory and run
 
     autoreconf --install
     ./configure

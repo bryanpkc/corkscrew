@@ -3,12 +3,12 @@ Welcome to Corkscrew
 
 ## Introduction
 
-Corkscrew is a tool for tunneling SSH through HTTP proxies, but... you might 
+Corkscrew is a tool for tunneling SSH through HTTP proxies, but... you might
 find another use for it.
 
 Corkscrew has been compiled on:
 
-- HPUX 
+- HPUX
 - Solaris
 - FreeBSD
 - OpenBSD
@@ -28,10 +28,10 @@ it elsewhere.
 
 ## Where Do I Get It?
 
-Corkscrew's primary distribution site was 
-[agroman.net/corkscrew](https://web.archive.org/web/20170510154150/http://agroman.net/corkscrew/), 
+Corkscrew's primary distribution site was
+[agroman.net/corkscrew](https://web.archive.org/web/20170510154150/http://agroman.net/corkscrew/),
 however it seems that the site went down and this repository is here to keep
-the code available. The new location is then 
+the code available. The new location is then
 [github.com/bryanpkc/corkscrew](https://github.com/bryanpkc/corkscrew).
 
 
@@ -47,14 +47,8 @@ sudo apt install build-essential
 sudo yum groupinstall 'Development tools'
 ```
 
-You will also need the source code. If you don't already have it, please
-clone it:
-
-```bash
-git clone https://github.com/bryanpkc/corkscrew.git
-```
-
-Then you need to go into the `corkscrew` source directory and run
+You need to clone the repo and then you need to go into the `corkscrew` source
+directory and run
 
 ```bash
 autoreconf --install
