@@ -55,7 +55,7 @@ char *in;
 	char *buf, *ret;
 
 	unsigned int tmp;
-	
+
 	int i,len;
 
 	len = strlen(in);
@@ -154,7 +154,7 @@ int port;
 		memcpy(&addr.sin_addr, hent->h_addr, hent->h_length);
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	
+
 	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)))
 		return -1;
 
@@ -202,7 +202,11 @@ char *argv[];
 				fprintf(stderr, "Error opening %s: %s\n", argv[5], strerror(errno));
 				exit(-1);
 			} else {
-				fscanf(fp, "%4095s", line);
+				if (!fscanf(fp, "%4095s", line)) {
+					fprintf(stderr, "Error reading auth file's content\n");
+					exit(-1);
+				}
+
 				up = line;
 				fclose(fp);
 			}
