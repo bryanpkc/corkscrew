@@ -20,5 +20,3 @@ stamp-h1
 # binaries
 corkscrew
 *.o
-.*.swp
-.*.swo
