@@ -184,7 +184,7 @@ char *argv[];
 
 	port = 80;
 
-	if ((argc == 5) || (argc == 6)) {
+	if (argc == 5 || argc == 6) {
 		if (argc == 5) {
 			host = argv[1];
 			port = atoi(argv[2]);
@@ -192,7 +192,7 @@ char *argv[];
 			destport = argv[4];
 			up = getenv("CORKSCREW_AUTH");
 		}
-		if ((argc == 6)) {
+		if (argc == 6) {
 			host = argv[1];
 			port = atoi(argv[2]);
 			desthost = argv[3];
