@@ -195,13 +195,14 @@ char *argv[];
 	size_t b64_buf_len;
 
 	port = 80;
+	csock = -1;
 
 	// start with a reasonable guess, 
 	// the base64_encode function will resize if necessary
 	b64_buf_len = 1024;
 	b64_buf = malloc(b64_buf_len);
 
-	if (argc == 5 || argc == 6) {
+	if ((argc == 5) || (argc == 6)) {
 		if (argc == 5) {
 			host = argv[1];
 			port = atoi(argv[2]);
@@ -209,7 +210,7 @@ char *argv[];
 			destport = argv[4];
 			up = getenv("CORKSCREW_AUTH");
 		}
-		if (argc == 6) {
+		if ((argc == 6)) {
 			host = argv[1];
 			port = atoi(argv[2]);
 			desthost = argv[3];
@@ -286,7 +287,6 @@ char *argv[];
 				if (len<=0)
 					break;
 				else {
-					memset(descr, 0, sizeof(descr));
 					sscanf(buffer,"%s%d%[^\n]",version,&code,descr);
 					if ((strncmp(version,"HTTP/",5) == 0) && (code >= 200) && (code < 300))
 						setup = 1;
