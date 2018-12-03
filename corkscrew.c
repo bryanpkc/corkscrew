@@ -286,6 +286,7 @@ char *argv[];
 				if (len<=0)
 					break;
 				else {
+					memset(descr, 0, sizeof(descr));
 					sscanf(buffer,"%s%d%[^\n]",version,&code,descr);
 					if ((strncmp(version,"HTTP/",5) == 0) && (code >= 200) && (code < 300))
 						setup = 1;
