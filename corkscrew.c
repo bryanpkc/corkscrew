@@ -249,7 +249,7 @@ char *argv[];
 		}
 		else {
 			exit_code = 1;
-			fprintf(stderr, "ERROR: base64 encoding failed");
+			fprintf(stderr, "ERROR: base64 encoding failed\n");
 			goto CLEANUP;
 		}
 	}
