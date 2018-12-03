@@ -44,16 +44,16 @@ char linefeed[] = "\r\n\r\n"; /* it is better and tested with oops & squid */
 const static char base64[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 #ifdef ANSI_FUNC
-int base64_encode (char *out, char *in, size_t *outlen, size_t *encoded_len)
+int base64_encode (char **outp, char *in, size_t *outlen, size_t *encoded_len)
 #else
-int base64_encode (out, in, outlen, encoded_len)
-char *out;
+int base64_encode (outp, in, outlen, encoded_len)
+char **outp;
 char *in;
 size_t *outlen;
 size_t *encoded_len;
 #endif
 {
-	char *src, *end;
+	char *src, *end, *out;
 	int ret;
 	size_t outlen_min;
 
@@ -61,6 +61,7 @@ size_t *encoded_len;
 
 	int i,inlen;
 
+    out = *outp;
 	if (!in || !out || !outlen || !*outlen) {
 		return -1; // bad input
 	}
@@ -74,7 +75,7 @@ size_t *encoded_len;
 	outlen_min =  4 * ((inlen + 2) / 3) + 1;
 	if (*outlen < outlen_min) {
 		*outlen = outlen_min;
-		out = realloc(out, outlen_min);
+		*outp = realloc(*outp, outlen_min);
 	}
 
 	ret = 0;
@@ -125,7 +126,7 @@ size_t *encoded_len;
 		break;
 	}
 
-	*encoded_len = strlen(out);
+	*encoded_len = strlen(*outp);
 	return ret;
 }
 
@@ -242,7 +243,7 @@ char *argv[];
 	strncat(uri, " HTTP/1.0", sizeof(uri) - strlen(uri) - 1);
 	if (up != NULL) {
 		size_t encoded_len = 0;
-		int encode_result = base64_encode(up, b64_buf, &b64_buf_len, &encoded_len);
+		int encode_result = base64_encode(&b64_buf, up, &b64_buf_len, &encoded_len);
 		if (0 == encode_result && encoded_len > 0) {
 			strncat(uri, "\nProxy-Authorization: Basic ", sizeof(uri) - strlen(uri) - 1);
 			strncat(uri, b64_buf, encoded_len);
