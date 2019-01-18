@@ -43,47 +43,55 @@ char linefeed[] = "\r\n\r\n"; /* it is better and tested with oops & squid */
 
 const static char base64[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-/* the output will be allocated automagically */
 #ifdef ANSI_FUNC
-char *base64_encode (char *in)
+int base64_encode (char **outp, char *in, size_t *outlen, size_t *encoded_len)
 #else
-char * base64_encode (in)
+int base64_encode (outp, in, outlen, encoded_len)
+char **outp;
 char *in;
+size_t *outlen;
+size_t *encoded_len;
 #endif
 {
-	char *src, *end;
-	char *buf, *ret;
+	char *src, *end, *out;
+	int ret;
+	size_t outlen_min;
 
 	unsigned int tmp;
 
-	int i,len;
+	int i, inlen;
 
-	len = strlen(in);
-	if (!in)
-		return NULL;
-	else
-		len = strlen(in);
+	out = *outp;
+	if (!in || !out || !outlen || !*outlen) {
+		return -1; // bad input
+	}
+	else {
+		inlen = strlen(in);
+	}
 
-	end = in + len;
+	end = in + inlen;
 
-	buf = malloc(4 * ((len + 2) / 3) + 1);
-	if (!buf)
-		return NULL;
-	ret = buf;
+	outlen_min =  4 * ((inlen + 2) / 3) + 1;
+	if (*outlen < outlen_min) {
+		*outlen = outlen_min;
+		*outp = realloc(*outp, outlen_min);
+	}
 
+	ret = 0;
+	memset(out, 0, *outlen);
 
 	for (src = in; src < end - 3;) {
 		tmp = *src++ << 24;
 		tmp |= *src++ << 16;
 		tmp |= *src++ << 8;
 
-		*buf++ = base64[tmp >> 26];
+		*out++ = base64[tmp >> 26];
 		tmp <<= 6;
-		*buf++ = base64[tmp >> 26];
+		*out++ = base64[tmp >> 26];
 		tmp <<= 6;
-		*buf++ = base64[tmp >> 26];
+		*out++ = base64[tmp >> 26];
 		tmp <<= 6;
-		*buf++ = base64[tmp >> 26];
+		*out++ = base64[tmp >> 26];
 	}
 
 	tmp = 0;
@@ -92,32 +100,32 @@ char *in;
 
 	switch (i) {
 		case 3:
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 			tmp <<= 6;
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 			tmp <<= 6;
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 			tmp <<= 6;
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 		break;
 		case 2:
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 			tmp <<= 6;
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 			tmp <<= 6;
-			*buf++ = base64[tmp >> 26];
-			*buf++ = '=';
+			*out++ = base64[tmp >> 26];
+			*out++ = '=';
 		break;
 		case 1:
-			*buf++ = base64[tmp >> 26];
+			*out++ = base64[tmp >> 26];
 			tmp <<= 6;
-			*buf++ = base64[tmp >> 26];
-			*buf++ = '=';
-			*buf++ = '=';
+			*out++ = base64[tmp >> 26];
+			*out++ = '=';
+			*out++ = '=';
 		break;
 	}
 
-	*buf = 0;
+	*encoded_len = strlen(*outp);
 	return ret;
 }
 
@@ -181,8 +189,17 @@ char *argv[];
 	struct timeval tv;
 	ssize_t len;
 	FILE *fp;
+	int exit_code = 0;
+	char *b64_buf;
+	size_t b64_buf_len;
 
 	port = 80;
+	csock = -1;
+
+	// start with a reasonable guess, 
+	// the base64_encode function will resize if necessary
+	b64_buf_len = 1024;
+	b64_buf = malloc(b64_buf_len);
 
 	if (argc == 5 || argc == 6) {
 		if (argc == 5) {
@@ -200,11 +217,13 @@ char *argv[];
 			fp = fopen(argv[5], "r");
 			if (fp == NULL) {
 				fprintf(stderr, "Error opening %s: %s\n", argv[5], strerror(errno));
-				exit(-1);
+				exit_code = -1;
+				goto CLEANUP;
 			} else {
 				if (!fscanf(fp, "%4095s", line)) {
 					fprintf(stderr, "Error reading auth file's content\n");
-					exit(-1);
+					exit_code = -1;
+					goto CLEANUP;
 				}
 
 				up = line;
@@ -213,7 +232,8 @@ char *argv[];
 		}
 	} else {
 		usage();
-		exit(-1);
+		exit_code = -1;
+		goto CLEANUP;
 	}
 
 	strncpy(uri, "CONNECT ", sizeof(uri));
@@ -222,15 +242,25 @@ char *argv[];
 	strncat(uri, destport, sizeof(uri) - strlen(uri) - 1);
 	strncat(uri, " HTTP/1.0", sizeof(uri) - strlen(uri) - 1);
 	if (up != NULL) {
-		strncat(uri, "\nProxy-Authorization: Basic ", sizeof(uri) - strlen(uri) - 1);
-		strncat(uri, base64_encode(up), sizeof(uri) - strlen(uri) - 1);
+		size_t encoded_len = 0;
+		int encode_result = base64_encode(&b64_buf, up, &b64_buf_len, &encoded_len);
+		if (0 == encode_result && encoded_len > 0) {
+			strncat(uri, "\nProxy-Authorization: Basic ", sizeof(uri) - strlen(uri) - 1);
+			strncat(uri, b64_buf, encoded_len);
+		}
+		else {
+			exit_code = 1;
+			fprintf(stderr, "Base64 encoding failed\n");
+			goto CLEANUP;
+		}
 	}
 	strncat(uri, linefeed, sizeof(uri) - strlen(uri) - 1);
 
 	csock = sock_connect(host, port);
 	if(csock == -1) {
 		fprintf(stderr, "Couldn't establish connection to proxy: %s\n", strerror(errno));
-		exit(-1);
+		exit_code = -1;
+		goto CLEANUP;
 	}
 
 	sent = 0;
@@ -263,8 +293,9 @@ char *argv[];
 					else {
 						if ((strncmp(version,"HTTP/",5) == 0) && (code >= 407)) {
 						}
-						fprintf(stderr, "Proxy could not open connection to %s: %s\n", desthost, descr);
-						exit(-1);
+						fprintf(stderr, "Proxy could not open connnection to %s: %s\n", desthost, descr);
+						exit_code = -1;
+						goto CLEANUP;
 					}
 				}
 			}
@@ -291,5 +322,13 @@ char *argv[];
 			}
 		}
 	}
-	exit(0);
+CLEANUP:
+	if (csock != -1) {
+		// close the socket
+		close(csock);
+	}
+	if (b64_buf) {
+		free(b64_buf);
+	}
+	exit(exit_code);
 }
