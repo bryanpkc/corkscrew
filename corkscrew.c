@@ -59,9 +59,9 @@ size_t *encoded_len;
 
 	unsigned int tmp;
 
-	int i,inlen;
+	int i, inlen;
 
-    out = *outp;
+	out = *outp;
 	if (!in || !out || !outlen || !*outlen) {
 		return -1; // bad input
 	}
@@ -71,7 +71,6 @@ size_t *encoded_len;
 
 	end = in + inlen;
 
-	// base64 output always larger than the input by a factor of 2/3
 	outlen_min =  4 * ((inlen + 2) / 3) + 1;
 	if (*outlen < outlen_min) {
 		*outlen = outlen_min;
@@ -190,7 +189,7 @@ char *argv[];
 	struct timeval tv;
 	ssize_t len;
 	FILE *fp;
-    int exit_code = 0;
+	int exit_code = 0;
 	char *b64_buf;
 	size_t b64_buf_len;
 
@@ -202,7 +201,7 @@ char *argv[];
 	b64_buf_len = 1024;
 	b64_buf = malloc(b64_buf_len);
 
-	if ((argc == 5) || (argc == 6)) {
+	if (argc == 5 || argc == 6) {
 		if (argc == 5) {
 			host = argv[1];
 			port = atoi(argv[2]);
@@ -210,7 +209,7 @@ char *argv[];
 			destport = argv[4];
 			up = getenv("CORKSCREW_AUTH");
 		}
-		if ((argc == 6)) {
+		if (argc == 6) {
 			host = argv[1];
 			port = atoi(argv[2]);
 			desthost = argv[3];
@@ -251,7 +250,7 @@ char *argv[];
 		}
 		else {
 			exit_code = 1;
-			fprintf(stderr, "ERROR: base64 encoding failed\n");
+			fprintf(stderr, "Base64 encoding failed\n");
 			goto CLEANUP;
 		}
 	}
@@ -287,6 +286,7 @@ char *argv[];
 				if (len<=0)
 					break;
 				else {
+					memset(descr, 0, sizeof(descr));
 					sscanf(buffer,"%s%d%[^\n]",version,&code,descr);
 					if ((strncmp(version,"HTTP/",5) == 0) && (code >= 200) && (code < 300))
 						setup = 1;
@@ -323,7 +323,7 @@ char *argv[];
 		}
 	}
 CLEANUP:
-	if (csock > 2) {
+	if (csock != -1) {
 		// close the socket
 		close(csock);
 	}
