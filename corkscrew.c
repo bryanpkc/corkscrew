@@ -262,7 +262,7 @@ char *argv[];
 					else {
 						if ((strncmp(version,"HTTP/",5) == 0) && (code >= 407)) {
 						}
-						fprintf(stderr, "Proxy could not open connnection to %s: %s\n", desthost, descr);
+						fprintf(stderr, "Proxy could not open connection to %s: %s\n", desthost, descr);
 						exit(-1);
 					}
 				}
