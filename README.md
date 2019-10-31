@@ -81,7 +81,7 @@ in the command line.
 
 ## How Do I Use The HTTP Authentication Feature?
 
-You will need to create a file that contains your usename and password
+You will need to create a file that contains your username and password
 in the form of:
 
 ```text
@@ -115,7 +115,7 @@ if you could include the following information:
 - Command line syntax you are using
 - Any error messages that are visible to you
 
-**NOTE**: I have had problems using the auth features with Mircosoft Proxy
+**NOTE**: I have had problems using the auth features with Microsoft Proxy
 server. The problems are sporadic, and I believe that they are related
 to the round-robin setup that I was testing it again. Your mileage may
 vary.
