@@ -41,9 +41,14 @@ First you need to install development tools:
 
     # For Debian-based distributions (Ubuntu, ElementaryOS, ...)
     sudo apt install build-essential
+    sudo apt-get install -y autoconf
 
     # For Red-Hat-based distributions (CentOS, Fedora, ...)
     sudo yum groupinstall 'Development tools'
+
+    # For MacOS
+    brew install autoconf
+    brew install automake
 
 You need to clone the repo and then you need to go into the corkscrew
 source directory and run
