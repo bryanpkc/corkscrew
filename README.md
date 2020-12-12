@@ -81,7 +81,7 @@ in the command line.
 
 ## How Do I Use The HTTP Authentication Feature?
 
-You will need to create a file that contains your usename and password
+You will need to create a file that contains your username and password
 in the form of:
 
 ```text
