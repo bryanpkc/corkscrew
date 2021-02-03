@@ -242,7 +242,7 @@ char *argv[];
 			FD_SET(csock, &sfd);
 		}
 		FD_SET(csock, &rfd);
-		FD_SET(0, &rfd);
+		if (setup) FD_SET(0, &rfd);
 
 		tv.tv_sec = 5;
 		tv.tv_usec = 0;
@@ -262,9 +262,9 @@ char *argv[];
 						setup = 1;
 					else {
 						if ((strncmp(version,"HTTP/",5) == 0) && (code >= 407)) {
+							fprintf(stderr, "Proxy could not open connection to %s: %s\n", desthost, descr);
+							exit(-1);
 						}
-						fprintf(stderr, "Proxy could not open connection to %s: %s\n", desthost, descr);
-						exit(-1);
 					}
 				}
 			}
