@@ -1,0 +1,7 @@
+# Invoke this ssh config using 'ssh -F <configfile>'
+Host *
+  ServerAliveInterval 30
+  ServerAliveCountMax 3
+  Compression yes
+  ProxyCommand ./corkscrew proxy.somewhere.com 8080 %h %p
+
