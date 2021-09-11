@@ -22,7 +22,6 @@ var CorkscrewCmd = &cobra.Command{
 might find another use for it.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 4 {
-			fmt.Printf("Insufficient number of args (5) in %+v\n", args)
 			usage()
 			os.Exit(1)
 		}
