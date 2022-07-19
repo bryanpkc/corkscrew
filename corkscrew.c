@@ -1,16 +1,25 @@
 #include "config.h"
+
+#if !defined(_WIN32)
 #include <arpa/inet.h>
+	#include <netinet/in.h>
+	#include <netdb.h>
+	#include <sys/socket.h>
+	#include <sys/time.h>
+	#include <unistd.h>
+#define socket_t int
+#else
+	#include <io.h>
+	#include <WinSock2.h>
+	#define socket_t SOCKET
+#endif
+
 #include <errno.h>
 #include <fcntl.h>
-#include <netdb.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #if HAVE_SYS_FILIO_H
 #include <sys/filio.h>
@@ -41,7 +50,7 @@ char linefeed[] = "\r\n\r\n"; /* it is better and tested with oops & squid */
 ** Copyright (C) 2001 Tamas SZERB <toma@rulez.org>
 */
 
-const static char base64[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+const static char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 /* the output will be allocated automagically */
 #ifdef ANSI_FUNC
@@ -56,7 +65,8 @@ char *in;
 
 	unsigned int tmp;
 
-	int i,len;
+	int i;
+	size_t len; 
 
 	len = strlen(in);
 	if (!in)
@@ -153,7 +163,7 @@ int port;
 	else
 		memcpy(&addr.sin_addr, hent->h_addr, hent->h_length);
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+	addr.sin_port = htons((u_short)port);
 
 	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)))
 		return -1;
@@ -179,7 +189,7 @@ char *argv[];
 	int port, sent, setup, code, csock;
 	fd_set rfd, sfd;
 	struct timeval tv;
-	ssize_t len;
+	int len;
 	FILE *fp;
 
 	port = 80;

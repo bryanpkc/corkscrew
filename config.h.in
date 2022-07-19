@@ -1,0 +1,6 @@
+/**
+ * Configuration file
+ */
+
+ #cmakedefine01 ANSI_FUNC
+ #cmakedefine VERSION "@VERSION@"

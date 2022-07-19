@@ -22,3 +22,6 @@ corkscrew
 *.o
 .*.swp
 .*.swo
+*.pdb
+
+build
