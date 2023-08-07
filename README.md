@@ -21,6 +21,7 @@ Corkscrew has been tested with the following HTTP proxies:
 - CacheFlow
 - JunkBuster
 - Apache mod_proxy
+- [Privoxy](https://www.privoxy.org/)
 
 Please open a pull request if you get it working on other proxies or compile
 it elsewhere.
