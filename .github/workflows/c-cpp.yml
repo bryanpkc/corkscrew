@@ -20,3 +20,9 @@ jobs:
       run: ./configure
     - name: make
       run: make
+    - name: 'Upload executable'
+      uses: actions/upload-artifact@v3
+      with:
+        name: corkscrew
+        path: corkscrew
+        retention-days: 5
